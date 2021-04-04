@@ -66,6 +66,7 @@ Example launch file:
     parser = optparse.OptionParser(usage=usage, prog=NAME)
     add_timeout_option(parser)
     options, args = parser.parse_args(myargv[2:])
+    
     if len(args) == 0:
         parser.error("invalid arguments. Please specify a node name")
     elif len(args) > 1:
@@ -102,6 +103,7 @@ Examples:
     parser = optparse.OptionParser(usage=usage, prog=NAME)
     add_timeout_option(parser)
     options, _ = parser.parse_args(optparse_args)
+    print("args : ",args)
     if len(args) > 3:
         parser.error("too many arguments")
     elif len(args) < 2:
@@ -227,19 +229,9 @@ def connect():
     rospy.init_node('dynparam', anonymous=True)
 
 if __name__ == '__main__':
-    myargv = rospy.myargv()
-    print(myargv)
-    if len(myargv) == 1:
-        print_usage()
-    else:
-        cmd = myargv[1]
-        try:
-            if   cmd == 'list':                do_list()
-            elif cmd == 'set_from_parameters': do_set_from_parameters()
-            elif cmd == 'set':                 do_set()
-            elif cmd == 'get':                 do_get()
-            elif cmd == 'load':                do_load()
-            elif cmd == 'dump':                do_dump()
-            else:                              print_usage()
-        except rospy.exceptions.ROSInterruptException:
-            pass
+    myargv_original = rospy.myargv()
+    myargv = [myargv_original[0], 'set', '/move_base/DWAPlannerROS', "{'xy_goal_tolerance': 2}"]
+    try:
+        do_set()
+    except rospy.exceptions.ROSInterruptException:
+        pass
